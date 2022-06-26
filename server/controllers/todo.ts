@@ -1,6 +1,8 @@
 const Todo = require("../models/todo");
+const { NextFunction, Request, Response } = require("express");
 
-exports.getAllTodo = (req, res) => {
+
+exports.getAllTodo = (req:Request, res:Response) => {
   Todo.find()
     .then((data) => {
       res.json(data);
@@ -10,9 +12,14 @@ exports.getAllTodo = (req, res) => {
     );
 };
 
-exports.postCreateTodo = (req, res) => {
+interface postCreateTodoType{
+  text:string, complete:string, _id:number
+}
+
+
+exports.postCreateTodo = (req:Request, res:Response) => {
   Todo.create(req.body)
-    .then(({ text, complete, _id }) => {
+    .then(({ text, complete, _id }: postCreateTodoType) => {
       // console.log(data);
       res
         .status(200)
@@ -21,26 +28,27 @@ exports.postCreateTodo = (req, res) => {
           data: { text, complete, _id },
         });
     })
-    .catch((err) =>
+    .catch((err: any) =>
       res
         .status(400)
         .json({ message: "Failed to add todo", error: err.message })
     );
 };
 
-exports.putUpdateTodo = (req, res) => {
+exports.putUpdateTodo = (req:Request, res:Response) => {
   Todo.findByIdAndUpdate(req.params.id, req.body)
     .then((data) =>
       res.status(200).json({ message: "updated successfully", data })
     )
-    .catch((err) =>
+    .catch((err: any) =>
       res
         .status(400)
         .json({ message: "Failed to update todo", error: err.message })
     );
 };
 
-exports.deleteTodo = (req, res) => {
+
+exports.deleteTodo = (req:Request, res:Response) => {
   Todo.findByIdAndRemove(req.params.id, req.body)
     .then((data) =>
       res.status(200).json({ message: "todo deleted successfully", data })
